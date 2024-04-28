@@ -1,9 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Msg from "../components/flash-msg";
 
 export default function Join() {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const roomCreatedMessage = sessionStorage.getItem("roomCreated")
+        ? "Game Successfully Created"
+        : "";
+
+    useEffect(() => {
+        sessionStorage.removeItem("roomCreated");
+    });
+
     return (
-        <div>
+        <div class="full flex">
+            {roomCreatedMessage && (
+                <Msg message={roomCreatedMessage} success={true}></Msg>
+            )}
             <h3 class="mb-6 text-2xl font-medium text-center">Join Game</h3>
             <form>
                 <input
@@ -14,6 +28,7 @@ export default function Join() {
                     data-rounded="rounded-lg"
                     data-primary="blue-500"
                     placeholder="Join Code"
+                    value={searchParams.get("code") || ""}
                 />
                 <input
                     type="text"

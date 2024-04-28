@@ -39,12 +39,36 @@ connectMongoDB()
         console.error("Error initializing MongoDB:", error);
     });
 
+/**
+ * @param {string} code Join code for desired room
+ * @returns {json|null} Information about desired room
+ */
+async function getRoomByCode(code) {
+    try {
+        const result = await collection.findOne({ code: `${code}` });
+        return result;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
 // Incoming request to create a room
 app.post("/create", async (req, res) => {
-    const data = req.body;
-    console.log(data);
-    const result = await collection.insertOne(data);
-    res.json({ message: "Room Created", id: result.insertedId });
+    try {
+        const data = req.body;
+        const room = await getRoomByCode(data.code);
+
+        if (room != null) {
+            res.json({ message: "Room with join code already exists" });
+            return;
+        }
+
+        const result = await collection.insertOne(data);
+        res.json({ message: "Room Created", id: result.insertedId });
+    } catch (error) {
+        console.error("Error inserting data:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 // Tells our server to listen for requests

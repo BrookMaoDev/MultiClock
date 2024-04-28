@@ -1,5 +1,6 @@
 import React from "react";
 import Form from "../components/create-post-form";
+import Msg from "../components/flash-msg";
 
 export default function Create() {
     return (

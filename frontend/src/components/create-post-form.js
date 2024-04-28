@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Form() {
     const API_ENDPOINT = "http://localhost:4000/create"; // Where the server is located
+    const navigate = useNavigate();
 
     /**
      * @description Sends a post request to the server. Function should be called upon form submission.
@@ -11,12 +12,23 @@ export default function Form() {
         event.preventDefault(); // Prevents the default GET request
 
         try {
+            // Package form data as a JSON
             const outgoingData = {
                 code: document.getElementById("code").value,
                 numPlayers: document.getElementById("players").value,
                 time: document.getElementById("time").value,
                 increment: document.getElementById("increment").value,
             };
+
+            // Ensure all fields are filled
+            for (const key in outgoingData) {
+                if (outgoingData[key] == "") {
+                    alert("All fields are required");
+                    return;
+                }
+            }
+
+            // Makes the API call
             const response = await fetch(API_ENDPOINT, {
                 method: "POST",
                 headers: {
@@ -25,9 +37,17 @@ export default function Form() {
                 body: JSON.stringify(outgoingData),
             });
             const data = await response.json();
-            console.log(data);
+
+            if (data.message == "Room Created") {
+                // Redirect to join page
+                sessionStorage.setItem("roomCreated", true);
+                navigate(`/join?code=${outgoingData.code}`);
+            } else {
+                alert(`${data.message}`);
+                return;
+            }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error making API request:", error);
         }
     };
 
