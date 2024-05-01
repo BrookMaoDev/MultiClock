@@ -7,25 +7,22 @@ export default function Msg({ message, success }) {
         const timer = setTimeout(() => {
             setVisible(false);
         }, 5000);
-
         return () => clearTimeout(timer);
     }, []);
 
-    if (success) {
-        return visible ? (
-            <div
-                class={`absolute w-full top-0 h-12 flex items-center justify-center font-semibold text-white bg-green-500`}
-            >
-                {message}
-            </div>
-        ) : null;
-    } else {
-        return visible ? (
-            <div
-                class={`absolute w-full top-0 h-12 flex items-center justify-center font-semibold text-white bg-red-500`}
-            >
-                {message}
-            </div>
-        ) : null;
+    const gradient = success
+        ? "bg-gradient-to-r from-lime-400 to-lime-500"
+        : "bg-gradient-to-r from-red-500 to-orange-500";
+
+    if (!visible) {
+        return null;
     }
+
+    return (
+        <div
+            className={`absolute w-full top-0 h-12 flex items-center justify-center text-white font-bold ${gradient}`}
+        >
+            {message}
+        </div>
+    );
 }

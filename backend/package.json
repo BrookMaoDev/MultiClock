@@ -1,5 +1,5 @@
 {
-    "name": "multiclock-backend",
+    "name": "multiclock_backend",
     "version": "1.0.0",
     "description": "Back-end of multiplayer clock application",
     "main": "index.js",

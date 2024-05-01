@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import Create from "./pages/create";
 import Join from "./pages/join";
+import Clock from "./pages/clock";
 
 ReactDOM.render(
     <React.StrictMode>
@@ -14,6 +15,7 @@ ReactDOM.render(
                 <Route path="/" element={<Home />} />
                 <Route path="/create" element={<Create />} />
                 <Route path="/join" element={<Join />} />
+                <Route path="/clock" element={<Clock />} />
             </Routes>
         </Router>
     </React.StrictMode>,

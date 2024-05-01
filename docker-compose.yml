@@ -1,4 +1,4 @@
-# Specifying docker compose version
+# Specifying Docker Compose version
 version: latest
 
 services:
@@ -9,34 +9,42 @@ services:
     build: ./frontend
     # Ports to map from the host machine to the container
     ports:
-      - "3000:3000"
+      - "${FRONTEND_HOST_PORT}:${FRONTEND_CONTAINER_PORT}"
+    # Connects the service to the predefined network
     networks:
       - network
+    # Loads environment variables from the specified file
+    env_file:
+      - .env
 
   backend:
     container_name: multiclock_backend
     build: ./backend
     ports:
-      - "4000:3000"
+      - "${BACKEND_HOST_PORT}:${BACKEND_CONTAINER_PORT}"
     networks:
       - network
+    env_file:
+      - .env
 
   mongo:
     container_name: multiclock_db
-    # Specifying base image
+    # Specifies the base image
     image: mongo:latest
     ports:
-      - "27017:27017"
-    # Save database contents in a volume so that it is not lost on container restarts
+      - "${DATABASE_HOST_PORT}:${DATABASE_CONTAINER_PORT}"
+    # Saves database contents in a volume to prevent data loss on container restarts
     volumes:
       - mongodb_data:/data/db
     networks:
       - network
 
+# Defines volumes used by services
 volumes:
   mongodb_data: {}
 
-# Connect all containers on a single network
+# Defines a network to connect all containers
 networks:
   network:
+    # Specifies the driver for the network
     driver: bridge

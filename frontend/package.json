@@ -1,5 +1,5 @@
 {
-    "name": "multiclock-frontend",
+    "name": "multiclock_frontend",
     "version": "1.0.0",
     "description": "Front-end of multiplayer clock application",
     "main": "index.js",
