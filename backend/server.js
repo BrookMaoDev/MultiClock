@@ -20,7 +20,12 @@ async function connectMongoDB() {
     try {
         await client.connect();
         console.log("Connected to MongoDB");
+
         const db = client.db(dbName);
+        // Attempts to create the collection.
+        // If the collection (and implicitly the database) doesn't exist, MongoDB will create them.
+        await db.command({ create: collectionName });
+
         collection = db.collection(collectionName);
         console.log("Collection set up successfully");
     } catch (error) {

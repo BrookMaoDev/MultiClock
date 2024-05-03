@@ -128,3 +128,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore PEM files containing private keys
+*.pem
+
+# Exclude local Docker Compose configuration for production environment
+docker-compose.prod.yml

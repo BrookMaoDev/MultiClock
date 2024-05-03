@@ -20,7 +20,7 @@ export default function Msg({ message, success }) {
 
     return (
         <div
-            className={`absolute w-full top-0 h-12 flex items-center justify-center text-white font-bold ${gradient}`}
+            className={`absolute w-full top-0 h-12 flex items-center justify-center text-white font-medium ${gradient}`}
         >
             {message}
         </div>
