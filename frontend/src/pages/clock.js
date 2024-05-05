@@ -56,9 +56,12 @@ export default function Clock() {
     // Generate Timer components for each player
     const clocks = [];
     for (let i = 0; i < roomData.numPlayers; i++) {
+        const playerName = roomData.players[i]
+            ? roomData.players[i]
+            : `Player ${i + 1}`;
         clocks.push(
             <Timer
-                player={`Player ${i + 1}`}
+                player={playerName}
                 time={roomData.time}
                 increment={roomData.increment}
                 key={i}
