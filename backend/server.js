@@ -1,13 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient } = require("mongodb");
+const { createServer } = require("node:http");
+const { Server } = require("socket.io");
 
 const app = express();
-const port = process.env.BACKEND_CONTAINER_PORT;
-
-// Middleware
 app.use(cors());
 app.use(express.json()); // To parse incoming JSON
+
+const server = createServer(app);
+const io = new Server(server, {
+    cors: { origin: "*", methods: ["GET", "POST"] },
+});
+
+const express_port = process.env.BACKEND_CONTAINER_PORT_EXPRESS;
+const socket_port = process.env.BACKEND_CONTAINER_PORT_SOCKET;
 
 // MongoDB connection setup
 const mongoURL = process.env.MONGO_URL;
@@ -51,7 +58,7 @@ async function getRoomByCode(code) {
     }
 }
 
-// Routes
+// Express routes
 
 // Create a room
 app.post("/create", async (req, res) => {
@@ -121,10 +128,15 @@ app.post("/join", async (req, res) => {
         }
 
         // Add player to room
-        await collection.updateOne(
+        const updatedDocument = await collection.findOneAndUpdate(
             { _id: room._id },
-            { $push: { players: data.name } }
+            { $push: { players: data.name } },
+            { returnDocument: "after" }
         );
+
+        // Send updated player list to all listening sockets
+        io.to(data.code).emit("update", { newData: updatedDocument });
+
         res.status(200).json({ success: true, message: "Player Added" });
     } catch (error) {
         console.error("Error joining room:", error);
@@ -156,7 +168,29 @@ app.post("/get", async (req, res) => {
     }
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+// Start Express server
+app.listen(express_port, () => {
+    console.log(`Express server listening on port ${express_port}`);
+});
+
+// Socket.IO setup
+
+// Runs on new connections
+io.on("connection", (socket) => {
+    console.log(`Client ${socket.id} connected`);
+
+    // User joined the clock page, not necessarily a player
+    socket.on("joinRoom", ({ roomCode }) => {
+        socket.join(roomCode);
+        console.log(`Client ${socket.id} joined ${roomCode}`);
+    });
+
+    socket.on("disconnect", () => {
+        console.log(`Client ${socket.id} disconnected`);
+    });
+});
+
+// Start Socket.IO server
+server.listen(socket_port, () => {
+    console.log(`Socket.IO server listening on port ${socket_port}`);
 });

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import socketIOClient from "socket.io-client";
 import Timer from "../components/timer";
 
 export default function Clock() {
@@ -7,10 +8,33 @@ export default function Clock() {
     const roomCode = urlParams.get("room");
 
     // Endpoint for fetching room data
-    const API_ENDPOINT = process.env.REACT_APP_GET_ENDPOINT;
+    const EXPRESS_API_ENDPOINT = process.env.REACT_APP_GET_ENDPOINT;
+    const SOCKET_API_ENDPOINT = process.env.REACT_APP_SOCKET_ENDPOINT;
 
     // State for storing room data
     const [roomData, setRoomData] = useState(null);
+
+    // Socket.IO setup
+    const [socket, setSocket] = useState(null);
+
+    // Connects to socket
+    function createSocket() {
+        const socket = socketIOClient(SOCKET_API_ENDPOINT);
+        setSocket(socket);
+
+        // Emit an event to the server to join the Socket.IO room
+        socket.emit("joinRoom", { roomCode });
+
+        // Room information has changed
+        socket.on("update", ({ newData }) => {
+            setRoomData(newData);
+            console.log(newData);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }
 
     /**
      * Fetch room data from the server.
@@ -21,7 +45,7 @@ export default function Clock() {
         const outgoingData = { code: roomCode };
 
         try {
-            const response = await fetch(API_ENDPOINT, {
+            const response = await fetch(EXPRESS_API_ENDPOINT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(outgoingData),
@@ -44,13 +68,17 @@ export default function Clock() {
         async function fetchData() {
             const data = await getRoomData(roomCode);
             setRoomData(data);
+
+            if (data) {
+                createSocket();
+            }
         }
         fetchData();
     }, [roomCode]);
 
     // Display message if room data is null or false
     if (roomData === null || roomData === false) {
-        return <h1 className="text-3xl">Could not join room</h1>;
+        return <h1 className="text-4xl font-bold">Could not join room</h1>;
     }
 
     // Generate Timer components for each player

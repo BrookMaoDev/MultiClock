@@ -15,20 +15,23 @@ services:
       - network
     # Creates environment variables
     environment:
-      REACT_APP_CREATE_ENDPOINT: "http://localhost:4000/create"
-      REACT_APP_JOIN_ENDPOINT: "http://localhost:4000/join"
-      REACT_APP_GET_ENDPOINT: "http://localhost:4000/get"
+      REACT_APP_CREATE_ENDPOINT: "http://localhost:3000/create"
+      REACT_APP_JOIN_ENDPOINT: "http://localhost:3000/join"
+      REACT_APP_GET_ENDPOINT: "http://localhost:3000/get"
+      REACT_APP_SOCKET_ENDPOINT: "http://localhost:3001"
 
   backend:
     container_name: multiclock_backend
     build: ./backend
     ports:
-      - "4000:3000"
+      - "3000:3000"
+      - "3001:3001"
     networks:
       - network
     environment:
       MONGO_URL: "mongodb://mongo:27017"
-      BACKEND_CONTAINER_PORT: 3000
+      BACKEND_CONTAINER_PORT_EXPRESS: 3000
+      BACKEND_CONTAINER_PORT_SOCKET: 3001
 
   mongo:
     container_name: multiclock_db
