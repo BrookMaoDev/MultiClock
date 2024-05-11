@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import Timer from "../components/timer";
+import NotFound from "./not_found";
 
 export default function Clock() {
     // Retrieving room code from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const roomCode = urlParams.get("room");
 
-    // Endpoint for fetching room data
+    // Endpoints for fetching room data
     const EXPRESS_API_ENDPOINT = process.env.REACT_APP_GET_ENDPOINT;
     const SOCKET_API_ENDPOINT = process.env.REACT_APP_SOCKET_ENDPOINT;
 
@@ -78,7 +80,7 @@ export default function Clock() {
 
     // Display message if room data is null or false
     if (roomData === null || roomData === false) {
-        return <h1 className="text-4xl font-bold">Could not join room</h1>;
+        return <NotFound></NotFound>;
     }
 
     // Generate Timer components for each player
@@ -90,7 +92,7 @@ export default function Clock() {
         clocks.push(
             <Timer
                 player={playerName}
-                time={roomData.time}
+                time={roomData.times ? roomData.times[i] : roomData.time * 60}
                 increment={roomData.increment}
                 key={i}
             />
@@ -98,7 +100,10 @@ export default function Clock() {
     }
 
     return (
-        <div id="clockPage" className="full pb-1 px-1">
+        <div
+            id="clockPage"
+            className="full pb-1 px-1 bg-gradient-to-r from-slate-50 to-slate-200"
+        >
             {clocks}
         </div>
     );

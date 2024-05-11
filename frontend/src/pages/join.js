@@ -59,7 +59,10 @@ export default function Join() {
     });
 
     return (
-        <div id="joinPage" className="full flex">
+        <div
+            id="joinPage"
+            className="full flex bg-gradient-to-r from-slate-50 to-slate-200"
+        >
             <div id="flashMsg" className="absolute w-full top-0 left-0 h-12">
                 {roomCreatedMessage && (
                     <Msg message={roomCreatedMessage} success={true}></Msg>

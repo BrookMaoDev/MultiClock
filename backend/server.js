@@ -58,6 +58,20 @@ async function getRoomByCode(code) {
     }
 }
 
+function startTimer(roomData, playerIndex) {
+    const room = roomData;
+    room.times = [];
+
+    for (let i = 0; i < room.numPlayers; i++) {
+        room.times.push(roomData.time * 60);
+    }
+
+    const timer = setInterval(() => {
+        roomData.times[playerIndex]--;
+        io.to(roomData.code).emit("update", { newData: room });
+    }, 1000);
+}
+
 // Express routes
 
 // Create a room
@@ -136,6 +150,11 @@ app.post("/join", async (req, res) => {
 
         // Send updated player list to all listening sockets
         io.to(data.code).emit("update", { newData: updatedDocument });
+
+        // If room is filled, tell the frontend so that the game can start
+        if (updatedDocument.players.length == updatedDocument.numPlayers) {
+            startTimer(updatedDocument, 0);
+        }
 
         res.status(200).json({ success: true, message: "Player Added" });
     } catch (error) {

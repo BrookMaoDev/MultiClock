@@ -56,7 +56,10 @@ export default function Create() {
     };
 
     return (
-        <div id="createPage" className="full flex">
+        <div
+            id="createPage"
+            className="full flex bg-gradient-to-r from-slate-50 to-slate-200"
+        >
             <div
                 id="flashMsg"
                 className="absolute w-full top-0 left-0 h-12"

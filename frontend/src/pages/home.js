@@ -5,7 +5,7 @@ export default function Home() {
     return (
         <div
             id="homePage"
-            className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8"
+            className="px-4 mx-auto text-center sm:px-6 lg:px-8 bg-gradient-to-r from-slate-50 to-slate-200 full"
         >
             <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl xl:text-6xl">
                 MultiClock
