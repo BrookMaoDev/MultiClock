@@ -58,18 +58,22 @@ async function getRoomByCode(code) {
     }
 }
 
-function startTimer(roomData, playerIndex) {
-    const room = roomData;
-    room.times = [];
+// Storage of rooms in live use
+const rooms = {};
 
-    for (let i = 0; i < room.numPlayers; i++) {
-        room.times.push(roomData.time * 60);
-    }
+function startTimer(roomCode) {
+    const room = rooms[roomCode];
 
-    const timer = setInterval(() => {
-        roomData.times[playerIndex]--;
-        io.to(roomData.code).emit("update", { newData: room });
+    room.timer = setInterval(() => {
+        room.times[room.currentTurnIndex]--;
+        io.to(room.code).emit("update", { newData: room });
     }, 1000);
+}
+
+function stopTimer(roomCode) {
+    const room = rooms[roomCode];
+    clearInterval(room.timer);
+    delete room.timer;
 }
 
 // Express routes
@@ -149,11 +153,19 @@ app.post("/join", async (req, res) => {
         );
 
         // Send updated player list to all listening sockets
-        io.to(data.code).emit("update", { newData: updatedDocument });
+        io.to(updatedDocument.code).emit("update", {
+            newData: updatedDocument,
+        });
 
-        // If room is filled, tell the frontend so that the game can start
+        // If room is filled, start the game
         if (updatedDocument.players.length == updatedDocument.numPlayers) {
-            startTimer(updatedDocument, 0);
+            rooms[updatedDocument.code] = updatedDocument;
+            rooms[updatedDocument.code].times = new Array(
+                Number(updatedDocument.numPlayers)
+            ).fill(updatedDocument.time * 60);
+            rooms[updatedDocument.code].currentTurnIndex = 0;
+
+            startTimer(updatedDocument.code);
         }
 
         res.status(200).json({ success: true, message: "Player Added" });
@@ -202,6 +214,26 @@ io.on("connection", (socket) => {
     socket.on("joinRoom", ({ roomCode }) => {
         socket.join(roomCode);
         console.log(`Client ${socket.id} joined ${roomCode}`);
+    });
+
+    socket.on("clockPressed", ({ roomCode, playerIndex }) => {
+        console.log(`Player ${playerIndex} pressed their clock`);
+
+        if (
+            rooms[roomCode] &&
+            rooms[roomCode].currentTurnIndex == playerIndex
+        ) {
+            stopTimer(roomCode);
+
+            rooms[roomCode].currentTurnIndex++;
+            if (
+                rooms[roomCode].currentTurnIndex >= rooms[roomCode].numPlayers
+            ) {
+                rooms[roomCode].currentTurnIndex = 0;
+            }
+
+            startTimer(roomCode);
+        }
     });
 
     socket.on("disconnect", () => {

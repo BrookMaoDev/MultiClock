@@ -25,7 +25,7 @@ export default function Clock() {
         setSocket(socket);
 
         // Emit an event to the server to join the Socket.IO room
-        socket.emit("joinRoom", { roomCode });
+        socket.emit("joinRoom", { roomCode: roomCode });
 
         // Room information has changed
         socket.on("update", ({ newData }) => {
@@ -95,6 +95,9 @@ export default function Clock() {
                 time={roomData.times ? roomData.times[i] : roomData.time * 60}
                 increment={roomData.increment}
                 key={i}
+                socket={socket}
+                index={i}
+                room={roomCode}
             />
         );
     }
