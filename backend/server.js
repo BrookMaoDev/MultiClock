@@ -61,12 +61,25 @@ async function getRoomByCode(code) {
 // Storage of rooms in live use
 const rooms = {};
 
-function startTimer(roomCode) {
+function subtractTime(roomCode) {
     const room = rooms[roomCode];
 
-    room.timer = setInterval(() => {
-        room.times[room.currentTurnIndex]--;
-        io.to(room.code).emit("update", { newData: room });
+    room.times[room.currentTurnIndex]--;
+    io.to(room.code).emit("update", { newData: room });
+
+    if (room.times[room.currentTurnIndex] == 0) {
+        room.gameOn = false;
+        stopTimer(roomCode);
+        io.to(room.code).emit("gameOver", {
+            newData: room,
+        });
+    }
+}
+
+function startTimer(roomCode) {
+    subtractTime(roomCode);
+    rooms[roomCode].timer = setInterval(() => {
+        subtractTime(roomCode);
     }, 1000);
 }
 
@@ -164,6 +177,7 @@ app.post("/join", async (req, res) => {
                 Number(updatedDocument.numPlayers)
             ).fill(updatedDocument.time * 60);
             rooms[updatedDocument.code].currentTurnIndex = 0;
+            rooms[updatedDocument.code].gameOn = true;
 
             startTimer(updatedDocument.code);
         }
@@ -213,23 +227,19 @@ io.on("connection", (socket) => {
     // User joined the clock page, not necessarily a player
     socket.on("joinRoom", ({ roomCode }) => {
         socket.join(roomCode);
-        console.log(`Client ${socket.id} joined ${roomCode}`);
     });
 
     socket.on("clockPressed", ({ roomCode, playerIndex }) => {
-        console.log(`Player ${playerIndex} pressed their clock`);
+        const room = rooms[roomCode];
 
-        if (
-            rooms[roomCode] &&
-            rooms[roomCode].currentTurnIndex == playerIndex
-        ) {
+        if (room && room.currentTurnIndex == playerIndex && room.gameOn) {
             stopTimer(roomCode);
 
-            rooms[roomCode].currentTurnIndex++;
-            if (
-                rooms[roomCode].currentTurnIndex >= rooms[roomCode].numPlayers
-            ) {
-                rooms[roomCode].currentTurnIndex = 0;
+            room.times[room.currentTurnIndex] += Number(room.increment);
+            room.currentTurnIndex++;
+
+            if (room.currentTurnIndex >= room.numPlayers) {
+                room.currentTurnIndex = 0;
             }
 
             startTimer(roomCode);

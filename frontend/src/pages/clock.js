@@ -16,6 +16,9 @@ export default function Clock() {
     // State for storing room data
     const [roomData, setRoomData] = useState(null);
 
+    // State for keeping track of the index of the player who has lost on time
+    const [gameOver, setGameOver] = useState(false);
+
     // Socket.IO setup
     const [socket, setSocket] = useState(null);
 
@@ -30,7 +33,14 @@ export default function Clock() {
         // Room information has changed
         socket.on("update", ({ newData }) => {
             setRoomData(newData);
-            console.log(newData);
+        });
+
+        // Someone has lost on time
+        socket.on("gameOver", ({ newData }) => {
+            console.log(
+                `${newData.players[newData.currentTurnIndex]} has lost on time`
+            );
+            setGameOver(true);
         });
 
         return () => {
@@ -89,6 +99,14 @@ export default function Clock() {
         const playerName = roomData.players[i]
             ? roomData.players[i]
             : `Player ${i + 1}`;
+
+        let timerState = "normal";
+        if (roomData.currentTurnIndex == i) {
+            timerState = gameOver ? "lost" : "timeRunning";
+        }
+
+        console.log(timerState);
+
         clocks.push(
             <Timer
                 player={playerName}
@@ -98,6 +116,7 @@ export default function Clock() {
                 socket={socket}
                 index={i}
                 room={roomCode}
+                state={timerState}
             />
         );
     }
