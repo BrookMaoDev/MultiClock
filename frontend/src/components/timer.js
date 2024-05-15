@@ -1,16 +1,26 @@
 import React from "react";
 
+/**
+ * @param {string} player Player name
+ * @param {number} time Time they have left in seconds
+ * @param {socket} socket Socket to emit to
+ * @param {number} index Order they are in
+ * @param {string} room Game room this clock belongs to
+ * @param {string} state Impacts display of clock
+ * @param {boolean} pressable Whether or not the user can press the clock
+ * @returns A single game clock for a single player
+ */
 export default function Timer({
     player = "",
     time = 0,
-    increment = 0,
     socket = null,
     index = 0,
     room = null,
     state = "normal",
+    pressable = false,
 }) {
     function handleClick() {
-        if (socket) {
+        if (socket && pressable) {
             socket.emit("clockPressed", { roomCode: room, playerIndex: index });
         }
     }

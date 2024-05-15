@@ -182,7 +182,11 @@ app.post("/join", async (req, res) => {
             startTimer(updatedDocument.code);
         }
 
-        res.status(200).json({ success: true, message: "Player Added" });
+        res.status(200).json({
+            success: true,
+            message: "Player Added",
+            playerIndex: updatedDocument.players.length - 1,
+        });
     } catch (error) {
         console.error("Error joining room:", error);
         res.status(500).json({

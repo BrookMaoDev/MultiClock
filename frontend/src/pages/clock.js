@@ -9,6 +9,9 @@ export default function Clock() {
     const urlParams = new URLSearchParams(window.location.search);
     const roomCode = urlParams.get("room");
 
+    // Which order the player is in. Can range from 0 - (numPlayers - 1).
+    const playerIndex = Number(sessionStorage.getItem("playerIndex"));
+
     // Endpoints for fetching room data
     const EXPRESS_API_ENDPOINT = process.env.REACT_APP_GET_ENDPOINT;
     const SOCKET_API_ENDPOINT = process.env.REACT_APP_SOCKET_ENDPOINT;
@@ -111,12 +114,12 @@ export default function Clock() {
             <Timer
                 player={playerName}
                 time={roomData.times ? roomData.times[i] : roomData.time * 60}
-                increment={roomData.increment}
-                key={i}
                 socket={socket}
                 index={i}
                 room={roomCode}
                 state={timerState}
+                pressable={i == playerIndex}
+                key={i}
             />
         );
     }

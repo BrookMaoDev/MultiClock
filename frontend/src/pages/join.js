@@ -36,6 +36,7 @@ export default function Join() {
 
             if (data.success) {
                 // Redirect to game
+                sessionStorage.setItem("playerIndex", data.playerIndex);
                 navigate(`/clock?room=${outgoingData.code}`);
             } else {
                 ReactDOM.render(
