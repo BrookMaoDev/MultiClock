@@ -1,15 +1,15 @@
 {
-    "name": "multiclock_backend",
-    "version": "1.0.0",
-    "description": "Back-end of multiplayer clock application",
-    "main": "index.js",
-    "scripts": {
-        "start": "node server.js"
-    },
-    "dependencies": {
-        "express": "4.19.2",
-        "cors": "2.8.5",
-        "mongodb": "6.5.0",
-        "socket.io": "^4.7.5"
-    }
+  "name": "multiclock_backend",
+  "version": "1.0.0",
+  "description": "Back-end of multiplayer clock application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.19.2",
+    "cors": "2.8.5",
+    "mongodb": "6.5.0",
+    "socket.io": "^4.7.5"
+  }
 }

@@ -10,16 +10,16 @@ import Clock from "./pages/clock";
 import NotFound from "./pages/not_found";
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Router>
-            <Routes>
-                <Route path="*" element={<NotFound />} />
-                <Route path="/" element={<Home />} />
-                <Route path="/create" element={<Create />} />
-                <Route path="/join" element={<Join />} />
-                <Route path="/clock" element={<Clock />} />
-            </Routes>
-        </Router>
-    </React.StrictMode>,
-    document.getElementById("root")
+  <React.StrictMode>
+    <Router>
+      <Routes>
+        <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<Create />} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/clock" element={<Clock />} />
+      </Routes>
+    </Router>
+  </React.StrictMode>,
+  document.getElementById("root"),
 );
