@@ -11,6 +11,7 @@ export default function Clock() {
 
   // Which order the player is in. Can range from 0 - (numPlayers - 1).
   const playerIndex = Number(sessionStorage.getItem("playerIndex"));
+  const playerRoomCode = sessionStorage.getItem("playerRoomCode");
 
   // Endpoints for fetching room data
   const EXPRESS_API_ENDPOINT = process.env.REACT_APP_GET_ENDPOINT;
@@ -39,7 +40,7 @@ export default function Clock() {
     });
 
     // Someone has lost on time
-    socket.on("gameOver", ({ newData }) => {
+    socket.on("gameOver", () => {
       setGameOver(true);
     });
 
@@ -113,9 +114,47 @@ export default function Clock() {
         index={i}
         room={roomCode}
         state={timerState}
-        pressable={i == playerIndex}
+        pressable={playerRoomCode == roomCode && !gameOver} // To ensure players can only press their own clock, use: i == playerIndex
         key={i}
       />,
+    );
+  }
+
+  let options;
+  if (playerRoomCode != roomCode) {
+    options = null;
+  } else if (gameOver) {
+    options = (
+      <Link
+        to="/"
+        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
+      >
+        Leave
+      </Link>
+    );
+  } else if (roomData.active) {
+    // Clocks are running, the option to pause should be shown
+    options = (
+      <div
+        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
+        onClick={() => {
+          socket.emit("pause", { roomCode: roomData.code });
+        }}
+      >
+        Pause
+      </div>
+    );
+  } else {
+    // Clocks are not running, the option to start should be shown
+    options = (
+      <div
+        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
+        onClick={() => {
+          socket.emit("start", { roomCode: roomData.code });
+        }}
+      >
+        Start
+      </div>
     );
   }
 
@@ -124,7 +163,11 @@ export default function Clock() {
       id="clockPage"
       className="full bg-gradient-to-r from-slate-50 to-slate-200 px-1 pb-1"
     >
+      <div className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white">
+        Moves: {roomData.moves || "0"}
+      </div>
       {clocks}
+      {options}
     </div>
   );
 }

@@ -85,15 +85,14 @@ function subtractTime(roomCode) {
   // Somebody has lost on time
   if (room.times[room.currentTurnIndex] == 0) {
     stopTimer(roomCode);
-    io.to(room.code).emit("gameOver", {
-      newData: room,
-    });
+    io.to(room.code).emit("gameOver");
     delete rooms[roomCode];
     deleteRoomByCode(roomCode);
   }
 }
 
 function startTimer(roomCode) {
+  rooms[roomCode].active = true;
   subtractTime(roomCode);
   rooms[roomCode].timer = setInterval(() => {
     subtractTime(roomCode);
@@ -102,8 +101,21 @@ function startTimer(roomCode) {
 
 function stopTimer(roomCode) {
   const room = rooms[roomCode];
-  clearInterval(room.timer);
-  delete room.timer;
+  if (room.timer) {
+    clearInterval(room.timer);
+    delete room.timer;
+  }
+}
+
+function resetRoom(roomCode) {
+  const room = rooms[roomCode];
+
+  if (room) {
+    room.times = new Array(Number(room.numPlayers)).fill(room.time * 60);
+    room.currentTurnIndex = 0;
+    room.active = false;
+    room.moves = 0;
+  }
 }
 
 // Express routes
@@ -188,12 +200,7 @@ app.post("/join", async (req, res) => {
     // If room is filled, start the game
     if (updatedDocument.players.length == updatedDocument.numPlayers) {
       rooms[updatedDocument.code] = updatedDocument;
-      rooms[updatedDocument.code].times = new Array(
-        Number(updatedDocument.numPlayers),
-      ).fill(updatedDocument.time * 60);
-      rooms[updatedDocument.code].currentTurnIndex = 0;
-
-      startTimer(updatedDocument.code);
+      resetRoom(updatedDocument.code);
     }
 
     res.status(200).json({
@@ -257,11 +264,27 @@ io.on("connection", (socket) => {
       room.currentTurnIndex++;
 
       if (room.currentTurnIndex >= room.numPlayers) {
+        room.moves++;
         room.currentTurnIndex = 0;
       }
 
       startTimer(roomCode);
     }
+  });
+
+  socket.on("start", ({ roomCode }) => {
+    const room = rooms[roomCode];
+
+    if (room) {
+      stopTimer(roomCode);
+      startTimer(roomCode);
+    }
+  });
+
+  socket.on("pause", ({ roomCode }) => {
+    stopTimer(roomCode);
+    rooms[roomCode].active = false;
+    io.to(roomCode).emit("update", { newData: rooms[roomCode] });
   });
 
   socket.on("disconnect", () => {
