@@ -1,6 +1,3 @@
-# Specifying Docker Compose version
-version: latest
-
 services:
   frontend:
     # Name of the service
