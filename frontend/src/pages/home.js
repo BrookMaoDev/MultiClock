@@ -27,7 +27,7 @@ export default function Home() {
           Join Game
         </Link>
       </div>
-      <div className="absolute bottom-0 flex h-8 justify-center text-center">
+      <div className="absolute bottom-0 flex h-8 justify-center text-center text-sm">
         View the source code and usage instructions on&nbsp;{" "}
         <a
           href="https://github.com/BrookMaoDev/MultiClock"

@@ -6,6 +6,14 @@ MultiClock is perfect for preventing multiplayer games from lasting too long, wh
 
 Coming soon!
 
+## Technologies Used
+
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Node, Express, Socket.IO
+- **Database**: MongoDB
+- **HTTPS Encryption**: NGINX, Let's Encrypt
+- **Deployment**: Amazon EC2, Docker, GitHub Actions
+
 ## How to Build
 
 Follow these steps to build and run MultiClock locally:
