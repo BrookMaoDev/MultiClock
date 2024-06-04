@@ -114,7 +114,7 @@ export default function Clock() {
         index={i}
         room={roomCode}
         state={timerState}
-        pressable={playerRoomCode == roomCode && !gameOver} // To ensure players can only press their own clock, use: i == playerIndex
+        pressable={playerRoomCode == roomCode && !gameOver && i == playerIndex}
         key={i}
       />,
     );

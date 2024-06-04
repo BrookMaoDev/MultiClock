@@ -171,6 +171,14 @@ app.post("/join", async (req, res) => {
       });
     }
 
+    // Enforce username length limit
+    if (data.name.length > 12) {
+      return res.status(400).json({
+        success: false,
+        message: "Username cannot be longer than 12 characters",
+      });
+    }
+
     // Fetch room by code
     const room = await getRoomByCode(data.code);
     if (!room) {
