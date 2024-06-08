@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Msg from "../components/flash-msg";
 
 export default function Join() {
-  const API_ENDPOINT = process.env.REACT_APP_JOIN_ENDPOINT; // API endpoint for joining a game
+  const API_ENDPOINT = process.env.REACT_APP_PREPARE_ENDPOINT;
   const navigate = useNavigate(); // Navigation hook
   const roomCreatedMessage = sessionStorage.getItem("roomCreated")
     ? "Game Successfully Created"
@@ -35,13 +35,8 @@ export default function Join() {
       const data = await response.json();
 
       if (data.success) {
-        // Redirect to game
-        sessionStorage.setItem("playerIndex", data.playerIndex);
-        sessionStorage.setItem(
-          "playerRoomCode",
-          document.getElementById("code").value,
-        );
-        navigate(`/clock?room=${outgoingData.code}`);
+        // Redirect to order
+        navigate(`/order?room=${outgoingData.code}&name=${outgoingData.name}`);
       } else {
         ReactDOM.render(
           <Msg

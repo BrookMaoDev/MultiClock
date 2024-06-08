@@ -13,6 +13,7 @@ services:
     # Creates environment variables
     environment:
       REACT_APP_CREATE_ENDPOINT: "http://localhost:3000/create"
+      REACT_APP_PREPARE_ENDPOINT: "http://localhost:3000/prepare"
       REACT_APP_JOIN_ENDPOINT: "http://localhost:3000/join"
       REACT_APP_GET_ENDPOINT: "http://localhost:3000/get"
       REACT_APP_SOCKET_ENDPOINT: "http://localhost:3001"

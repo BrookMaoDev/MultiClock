@@ -8,6 +8,7 @@ import Create from "./pages/create";
 import Join from "./pages/join";
 import Clock from "./pages/clock";
 import NotFound from "./pages/not_found";
+import Order from "./pages/order";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.render(
         <Route path="/create" element={<Create />} />
         <Route path="/join" element={<Join />} />
         <Route path="/clock" element={<Clock />} />
+        <Route path="/order" element={<Order />} />
       </Routes>
     </Router>
   </React.StrictMode>,
