@@ -39,6 +39,12 @@ export default function Clock() {
       setRoomData(newData);
     });
 
+    // Reset
+    socket.on("reset", ({ newData }) => {
+      setGameOver(false);
+      setRoomData(newData);
+    });
+
     // Someone has lost on time
     socket.on("gameOver", () => {
       setGameOver(true);
@@ -120,40 +126,87 @@ export default function Clock() {
     );
   }
 
+  const startClock = () => {
+    socket.emit("start", { roomCode: roomData.code });
+  };
+
+  const pauseClock = () => {
+    socket.emit("pause", { roomCode: roomData.code });
+  };
+
+  const resetClock = () => {
+    if (gameOver) {
+      socket.emit("reset", { roomCode: roomData.code });
+    } else {
+      const userConfirmed = window.confirm(
+        "Are you sure you want to reset the clock?",
+      );
+      if (userConfirmed) {
+        socket.emit("reset", { roomCode: roomData.code });
+      }
+    }
+  };
+
   let options;
   if (playerRoomCode != roomCode) {
     options = null;
   } else if (gameOver) {
     options = (
-      <Link
-        to="/"
-        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
-      >
-        Leave
-      </Link>
+      <div className="mt-1 flex w-full justify-center">
+        <div className="grid w-full grid-cols-2 gap-1">
+          <Link
+            to="/"
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+          >
+            Leave
+          </Link>
+          <div
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={resetClock}
+          >
+            Reset
+          </div>
+        </div>
+      </div>
     );
   } else if (roomData.active) {
     // Clocks are running, the option to pause should be shown
     options = (
-      <div
-        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
-        onClick={() => {
-          socket.emit("pause", { roomCode: roomData.code });
-        }}
-      >
-        Pause
+      <div className="mt-1 flex w-full justify-center">
+        <div className="grid w-full grid-cols-2 gap-1">
+          <div
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={pauseClock}
+          >
+            Pause
+          </div>
+          <div
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={resetClock}
+          >
+            Reset
+          </div>
+        </div>
       </div>
     );
   } else {
     // Clocks are not running, the option to start should be shown
     options = (
-      <div
-        className="mt-1 flex h-10 w-full items-center justify-center rounded-lg bg-blue-900 text-white"
-        onClick={() => {
-          socket.emit("start", { roomCode: roomData.code });
-        }}
-      >
-        Start
+      <div className="mt-1 flex w-full justify-center">
+        <div className="grid w-full grid-cols-2 gap-1">
+          <div
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={startClock}
+          >
+            Start
+          </div>
+          <div
+            className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={resetClock}
+          >
+            Reset
+          </div>
+        </div>
       </div>
     );
   }

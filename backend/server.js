@@ -86,8 +86,8 @@ function subtractTime(roomCode) {
     if (room.times[room.currentTurnIndex] == 0) {
         stopTimer(roomCode);
         io.to(room.code).emit("gameOver");
-        delete rooms[roomCode];
-        deleteRoomByCode(roomCode);
+        // delete rooms[roomCode];
+        // deleteRoomByCode(roomCode);
     }
 }
 
@@ -358,6 +358,16 @@ io.on("connection", (socket) => {
         stopTimer(roomCode);
         rooms[roomCode].active = false;
         io.to(roomCode).emit("update", { newData: rooms[roomCode] });
+    });
+
+    socket.on("reset", ({ roomCode }) => {
+        const room = rooms[roomCode];
+
+        if (room) {
+            stopTimer(roomCode);
+            resetRoom(roomCode);
+            io.to(roomCode).emit("reset", { newData: rooms[roomCode] });
+        }
     });
 
     socket.on("disconnect", () => {
