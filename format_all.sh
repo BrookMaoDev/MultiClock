@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Format all typical files
 prettier . --write
 

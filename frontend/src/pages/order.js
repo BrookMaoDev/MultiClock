@@ -84,6 +84,11 @@ export default function Order() {
         sessionStorage.setItem("playerRoomCode", roomCode);
         navigate(`/clock?room=${roomCode}`);
       } else {
+        if (data.message == "Someone has already taken that spot") {
+          const newData = await getRoomData(roomCode);
+          setRoomData(newData);
+        }
+
         ReactDOM.render(
           <Msg
             message={data.message}
@@ -105,7 +110,7 @@ export default function Order() {
   for (let i = 0; i < roomData.numPlayers; i++) {
     if (roomData.players[i] == null) {
       options.push(
-        <option value={i} key={i}>
+        <option value={i} key={i} id={`option${i}`}>
           {i + 1}
         </option>,
       );

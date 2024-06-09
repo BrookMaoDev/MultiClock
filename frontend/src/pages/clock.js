@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import socketIOClient from "socket.io-client";
 import Timer from "../components/timer";
 import NotFound from "./not_found";
 
 export default function Clock() {
+  // Navigation hook
+  const navigate = useNavigate();
+
   // Retrieving room code from URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const roomCode = urlParams.get("room");
@@ -127,7 +130,11 @@ export default function Clock() {
   }
 
   const startClock = () => {
-    socket.emit("start", { roomCode: roomData.code });
+    if (roomData.numPlayers > roomData.numJoinedPlayers) {
+      alert("Please wait for room to be full before starting");
+    } else {
+      socket.emit("start", { roomCode: roomData.code });
+    }
   };
 
   const pauseClock = () => {
@@ -147,6 +154,11 @@ export default function Clock() {
     }
   };
 
+  const leave = () => {
+    socket.disconnect();
+    navigate("/");
+  };
+
   let options;
   if (playerRoomCode != roomCode) {
     options = null;
@@ -154,12 +166,12 @@ export default function Clock() {
     options = (
       <div className="mt-1 flex w-full justify-center">
         <div className="grid w-full grid-cols-2 gap-1">
-          <Link
-            to="/"
+          <div
             className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
+            onClick={leave}
           >
             Leave
-          </Link>
+          </div>
           <div
             className="flex h-10 items-center justify-center rounded-lg bg-blue-900 text-white"
             onClick={resetClock}

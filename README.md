@@ -8,11 +8,11 @@ Coming soon!
 
 ## Technologies Used
 
--   **Frontend**: React, Tailwind CSS
--   **Backend**: Node, Express, Socket.IO
--   **Database**: MongoDB
--   **HTTPS Encryption**: NGINX, Let's Encrypt
--   **Deployment**: Amazon EC2, Docker, GitHub Actions
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Node, Express, Socket.IO
+- **Database**: MongoDB
+- **HTTPS Encryption**: NGINX, Let's Encrypt
+- **Deployment**: Amazon EC2, Docker, GitHub Actions
 
 ## How to Build
 
@@ -22,16 +22,16 @@ Follow these steps to build and run MultiClock locally:
 
 2. Clone your forked repository using the following command, replacing `<your-username>` with your GitHub username:
 
-    ```bash
-    git clone https://github.com/<your-username>/MultiClock.git
-    ```
+   ```bash
+   git clone https://github.com/<your-username>/MultiClock.git
+   ```
 
 3. Install Docker Desktop from [here](https://www.docker.com/products/docker-desktop/).
 
 4. Open a terminal in the repository directory and run the following command to build and start the containers:
 
-    ```bash
-    docker-compose -f "docker-compose.yml" up -d --build
-    ```
+   ```bash
+   docker-compose -f "docker-compose.yml" up -d --build
+   ```
 
 5. Open your web browser and go to [http://localhost](http://localhost) to access MultiClock.
