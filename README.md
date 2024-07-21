@@ -4,7 +4,11 @@ MultiClock is perfect for preventing multiplayer games from lasting too long, wh
 
 ## Usage Instructions
 
-Coming soon!
+1. Click the 'Create Game' button and fill out the form to create a new game that users can join.
+2. Have your friends click the 'Join Game' button and fill out the form to join the game.
+3. Once everyone has joined, click 'Start' to begin the multiplayer clock.
+
+![Demo](demo.gif)
 
 ## Technologies Used
 
