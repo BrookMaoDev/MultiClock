@@ -16,7 +16,7 @@ MultiClock is perfect for preventing multiplayer games from lasting too long, wh
 - **Backend**: Node, Express, Socket.IO
 - **Database**: MongoDB
 - **HTTPS Encryption**: NGINX, Let's Encrypt
-- **Deployment**: Amazon EC2, Docker, GitHub Actions
+- **Deployment**: Amazon EC2 (Linux), Docker, GitHub Actions
 
 ## How to Build
 
