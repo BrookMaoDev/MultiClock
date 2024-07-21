@@ -32,6 +32,7 @@ export default function Home() {
         <a
           href="https://github.com/BrookMaoDev/MultiClock"
           className="text-blue-600 underline"
+          target="_blank"
         >
           GitHub
         </a>
